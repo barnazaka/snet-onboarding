@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+// Message representing the data map (dates and values)
+message DataMap {
+    repeated string dates = 1;  // Dates as strings in 'YYYY-MM-DD' format
+    repeated double values = 2;  // Values as doubles
+}
+
+// Message representing model parameters
+message ModelParameters {
+    double changepoint_prior_scale = 1;
+    double seasonality_prior_scale = 2;
+    string seasonality_mode = 3;
+    bool yearly_seasonality = 4;
+    string growth = 5;
+}
+
+// Message representing the input data for forecasting
+message Data {
+    DataMap data = 1;
+    int32 periods = 2;
+    ModelParameters model_parameters = 3;
+    bool return_components = 4;
+}
+
+// Message representing a forecast component
+message ForecastComponent {
+    repeated double values = 1;  // List of component values
+}
+
+// Message representing the forecast result
+message Forecast {
+    repeated string forecast_dates = 1;          // List of dates
+    repeated double forecast_values = 2;         // List of forecasted values
+    repeated double forecast_lower_bound = 3;    // Lower confidence bounds
+    repeated double forecast_upper_bound = 4;    // Upper confidence bounds
+    map<string, ForecastComponent> components = 5;  // Optional components
+}
+
+// Request message for GetForecastService
+message ForecastRequest {
+    Data data = 1;
+    string api_url = 2;
+}
+
+// Response message for SaveForecastService
+message SaveForecastResponse {
+    bool success = 1;
+    string message = 2;  // Optional: Additional information about the operation
+}
+
+// Request message for SaveForecastService
+message SaveForecastRequest {
+    Forecast forecast = 1;
+    string output_path = 2;
+}
+
+// Service definitions
+service GetForecastService {
+    // Sends prepared data to the forecasting service and gets predictions
+    rpc GetForecast(ForecastRequest) returns (Forecast);
+}
+
+service SaveForecastService {
+    // Saves the forecast results to a CSV file
+    rpc SaveForecast(SaveForecastRequest) returns (SaveForecastResponse);
+}

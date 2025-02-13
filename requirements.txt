@@ -1,0 +1,7 @@
+requests==2.32.3
+fastapi==0.115.7
+numpy==2.2.2
+uvicorn==0.34.0
+prophet==1.1.6
+pandas==2.2.3
+pydantic==2.10.6
